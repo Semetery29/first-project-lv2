@@ -1,4 +1,4 @@
-import { Joi } from "joi";
+import Joi from "joi";
 import validator from "validator";
 
 // creating a schema validation using Joi
@@ -20,7 +20,7 @@ const userNameValidationSchema = Joi.object({
       if (!validator.isAlpha(value)) {
         return helpers.message({
           "string.alpha": "{#label} must only contain alphabetical characters",
-        } as any);
+        });
       }
       return value;
     }),
@@ -66,6 +66,7 @@ const studentValidationSchema = Joi.object({
   localGuardian: localGuardianValidationSchema.required(),
   profileImg: Joi.string(),
   isActive: Joi.string().valid("active", "blocked").default("active"),
+  isDeleted: Joi.boolean().default("false"),
 });
 
 export default studentValidationSchema;
