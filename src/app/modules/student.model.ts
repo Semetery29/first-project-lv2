@@ -85,7 +85,6 @@ const studentSchema = new Schema<TStudent, StudentModel>({
   password: {
     type: String,
     required: [true, "Password is required"],
-    unique: true,
     maxlength: [30, "Password can not be more than 30 characters"],
   },
   name: { type: userNameSchema, required: [true, "Student Name is required"] },
@@ -138,6 +137,10 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     enum: ["active", "blocked"],
     default: "active",
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // pre save middleware / hook : will work on create() , save()
@@ -145,7 +148,7 @@ const studentSchema = new Schema<TStudent, StudentModel>({
 studentSchema.pre("save", async function (next) {
   // console.log(this, "pre hook: we will save the data.");
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
+  const user = this; // doc
   // hashing password and save into DB
   user.password = await bcrypt.hash(
     user.password,
@@ -156,8 +159,16 @@ studentSchema.pre("save", async function (next) {
 
 // post save middleware / hook :
 
-studentSchema.post("save", function () {
-  console.log(this, "post hook: we saved our data.");
+studentSchema.post("save", function (doc, next) {
+  doc.password = "";
+
+  next();
+});
+
+// Query middleware
+
+studentSchema.pre("find", function (next) {
+  console.log(this);
 });
 
 // creating a custom static method
