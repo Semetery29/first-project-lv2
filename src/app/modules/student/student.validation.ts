@@ -54,6 +54,7 @@ const localGuardianValidationZSchema = z.object({
 
 const studentValidationZSchema = z.object({
   id: z.string().min(1, { message: "Student ID is required" }),
+  password: z.string().max(20),
   name: userNameValidationZSchema.refine(
     (value) => Object.keys(value).length > 0,
     {
